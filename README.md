@@ -1,2 +1,0 @@
-# ConwaysGameofLife
-Created with CodeSandbox
