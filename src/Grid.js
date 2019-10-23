@@ -1,25 +1,68 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "@emotion/styled";
 
 import Cell from "./Cell";
 
-function GenerateCells(columns, rows) {
-  const grid = [];
-  for (let i = 0; i < rows; i++) {
-    for (let j = 0; j < columns; j++) {
-      grid.push(<Cell rowPosition={i} columnPosition={j} />);
-    }
-  }
-  return grid;
-}
-
 function Grid({ columns, rows }) {
+  function onCellClick(rowPosition, columnPosition) {
+    console.log(rowPosition, columnPosition);
+    const targetCellIndex = gridState.findIndex(
+      cell =>
+        cell.rowPosition === rowPosition &&
+        cell.columnPosition === columnPosition
+    );
+    const targetCell = {
+      ...gridState[targetCellIndex],
+      alive: !gridState[targetCellIndex].alive
+    };
+
+    const updatedGridState = gridState.map(cell =>
+      cell.rowPosition === targetCell.rowPosition &&
+      cell.columnPosition === targetCell.columnPosition
+        ? targetCell
+        : cell
+    );
+    setGridState(updatedGridState);
+  }
+
+  const [gridState, setGridState] = useState([]);
+
+  useEffect(() => {
+    setGridState(InitGridState(columns, rows));
+  }, [columns, rows]);
+
+  function InitGridState(columns, rows) {
+    const gridState = [];
+    for (let i = 0; i < rows; i++) {
+      for (let j = 0; j < columns; j++) {
+        gridState.push({
+          rowPosition: i,
+          columnPosition: j,
+          alive: false
+        });
+      }
+    }
+    return gridState;
+  }
+
   var CellGrid = styled.div`
     display: grid;
     grid-template-columns: repeat(${columns}, 50px);
     grid-gap: 5px;
   `;
-  return <CellGrid>{GenerateCells(columns, rows)}</CellGrid>;
+  return (
+    <CellGrid>
+      {gridState.map(cell => (
+        <Cell
+          key={`${cell.rowPosition}x${cell.columnPosition}`}
+          rowPosition={cell.rowPosition}
+          columnPosition={cell.columnPosition}
+          onClick={onCellClick}
+          alive={cell.alive}
+        />
+      ))}
+    </CellGrid>
+  );
 }
 
 export default Grid;
