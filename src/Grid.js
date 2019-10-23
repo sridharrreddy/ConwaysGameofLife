@@ -5,21 +5,16 @@ import Cell from "./Cell";
 
 function Grid({ columns, rows }) {
   function onCellClick(rowPosition, columnPosition) {
-    console.log(rowPosition, columnPosition);
-    const targetCellIndex = gridState.findIndex(
+    const targetCell = gridState.find(
       cell =>
         cell.rowPosition === rowPosition &&
         cell.columnPosition === columnPosition
     );
-    const targetCell = {
-      ...gridState[targetCellIndex],
-      alive: !gridState[targetCellIndex].alive
-    };
 
     const updatedGridState = gridState.map(cell =>
       cell.rowPosition === targetCell.rowPosition &&
       cell.columnPosition === targetCell.columnPosition
-        ? targetCell
+        ? { ...targetCell, alive: !targetCell.alive }
         : cell
     );
     setGridState(updatedGridState);
