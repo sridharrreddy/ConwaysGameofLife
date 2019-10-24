@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import styled from "@emotion/styled";
 
 import Cell from "./Cell";
+import { InitGridState } from './GridHelper';
 
-function Grid({ columns, rows }) {
+function Grid({ columns, rows, isEvolving }) {
   function onCellClick(rowPosition, columnPosition) {
     const targetCell = gridState.find(
       cell =>
@@ -20,25 +21,19 @@ function Grid({ columns, rows }) {
     setGridState(updatedGridState);
   }
 
-  const [gridState, setGridState] = useState([]);
+  const evolutionTimer = useRef(null);
 
   useEffect(() => {
-    setGridState(InitGridState(columns, rows));
-  }, [columns, rows]);
-
-  function InitGridState(columns, rows) {
-    const gridState = [];
-    for (let i = 0; i < rows; i++) {
-      for (let j = 0; j < columns; j++) {
-        gridState.push({
-          rowPosition: i,
-          columnPosition: j,
-          alive: false
-        });
-      }
+    if (isEvolving) {
+      evolutionTimer.current = setInterval(() => {
+        
+      }, 500);
+    } else {
+      clearInterval(evolutionTimer.current);
     }
-    return gridState;
-  }
+  }, [isEvolving]);
+
+  const [gridState, setGridState] = useState(InitGridState(rows, columns));
 
   var CellGrid = styled.div`
     display: grid;

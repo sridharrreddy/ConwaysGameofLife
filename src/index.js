@@ -1,11 +1,28 @@
-import React from "react";
+import React, { useState } from "react";
 import ReactDOM from "react-dom";
+import Button from '@material-ui/core/Button';
+import PlayArrowIcon from '@material-ui/icons/PlayArrow';
+import PauseIcon from '@material-ui/icons/Pause';
 
 import "./styles.css";
 import Grid from "./Grid";
 
 function App() {
-  return <Grid columns={5} rows={4} />;
+  const [isEvolving, setIsEvolving] = useState(false);
+  return (
+    <React.Fragment>
+      <Grid columns={5} rows={4} isEvolving={isEvolving} />
+      <br />
+      <Button
+        variant="contained"
+        color="primary"
+        endIcon={isEvolving ? <PauseIcon /> : <PlayArrowIcon />}
+        onClick={() => setIsEvolving(!isEvolving)}
+      >
+      {isEvolving ? 'Pause' : 'Play'}
+      </Button>
+    </React.Fragment>
+  );
 }
 
 const rootElement = document.getElementById("root");
