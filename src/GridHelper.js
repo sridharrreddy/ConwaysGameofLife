@@ -14,14 +14,22 @@ export function InitGridState(rows, columns) {
 
 export function GetNextEvolutionState(currentGridState) {
 
+  return currentGridState.map(cell => EvolveCell(cell, currentGridState));
 }
 
-export function CalculateCellState(cell, grid) {
-  // 2 or 3 live neighboars to stay alive
+export function EvolveCell(cell, grid) {
   const neighbors = GetAllNeighbouringCells(cell, grid);
+  // 2 or 3 live neighbors to be alive
+  const liveNeighbors = neighbors.filter(n => n.alive);
+  if (liveNeighbors) {
+    if (2 === liveNeighbors.length) {
+      return cell;
+    } else if (liveNeighbors.length === 3) {
+      return { ...cell, alive: true };
+    }
+  } 
 
-  // 3 live neighboars to become alive
-  return cell;
+  return { ...cell, alive: false };
 }
 
 export function GetAllNeighbouringCells(cell, grid) {

@@ -9,9 +9,14 @@ import Grid from "./Grid";
 
 function App() {
   const [isEvolving, setIsEvolving] = useState(false);
+
+  function evolutionStalled() {
+    setIsEvolving(false);
+  }
+
   return (
     <React.Fragment>
-      <Grid columns={5} rows={4} isEvolving={isEvolving} />
+      <Grid columns={5} rows={4} isEvolving={isEvolving} evolutionStalled={evolutionStalled} />
       <br />
       <Button
         variant="contained"

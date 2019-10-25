@@ -1,11 +1,16 @@
 import React, { useState, useEffect, useRef } from "react";
 import styled from "@emotion/styled";
-
+import isEqual from 'lodash.isequal';
+import sortBy from 'lodash.sortby';
 import Cell from "./Cell";
-import { InitGridState } from './GridHelper';
+import { InitGridState, GetNextEvolutionState } from './GridHelper';
 
-function Grid({ columns, rows, isEvolving }) {
+function Grid({ columns, rows, isEvolving, evolutionStalled }) {
+
   function onCellClick(rowPosition, columnPosition) {
+    if (isEvolving) {
+      return;
+    }
     const targetCell = gridState.find(
       cell =>
         cell.rowPosition === rowPosition &&
@@ -23,17 +28,22 @@ function Grid({ columns, rows, isEvolving }) {
 
   const evolutionTimer = useRef(null);
 
+  const [gridState, setGridState] = useState(InitGridState(rows, columns));
+
   useEffect(() => {
     if (isEvolving) {
       evolutionTimer.current = setInterval(() => {
-        
+        const nextStep = GetNextEvolutionState(gridState);
+        if (!isEqual(sortBy(gridState), sortBy(nextStep))) {
+          setGridState(nextStep);
+        } else {
+          evolutionStalled();
+        }
       }, 500);
     } else {
       clearInterval(evolutionTimer.current);
     }
-  }, [isEvolving]);
-
-  const [gridState, setGridState] = useState(InitGridState(rows, columns));
+  }, [isEvolving, gridState]);
 
   var CellGrid = styled.div`
     display: grid;
